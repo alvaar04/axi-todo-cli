@@ -1,0 +1,13 @@
+{
+  "name": "axi-todo-cli",
+  "version": "0.1.0",
+  "description": "A minimal todo CLI to test gh-axi, lavish-axi, and no-mistakes",
+  "type": "module",
+  "bin": {
+    "todo": "./todo.mjs"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT"
+}
