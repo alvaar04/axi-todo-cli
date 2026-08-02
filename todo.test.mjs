@@ -39,6 +39,24 @@ test('remove', () => {
   assert.equal(out.trim(), 'no todos')
 })
 
+test('add with priority', () => {
+  const run = makeFixture()
+  run('add', '-p', 'high', 'urgent task')
+  const out = run('list')
+  assert.match(out, /#1 urgent task \[high\]/)
+})
+
+test('add rejects invalid priority', () => {
+  const run = makeFixture()
+  assert.throws(() => run('add', '-p', 'urgent', 'task'), /priority must be one of/)
+})
+
+test('add rejects a missing priority value', () => {
+  const run = makeFixture()
+  assert.throws(() => run('add', '-p'), /usage: todo add -p <low\|medium\|high> <text>/)
+  assert.equal(run('list').trim(), 'no todos')
+})
+
 test('add requires text', () => {
   const run = makeFixture()
   assert.throws(() => run('add'), /usage: todo add <text>/)
