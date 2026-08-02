@@ -51,6 +51,12 @@ test('add rejects invalid priority', () => {
   assert.throws(() => run('add', '-p', 'urgent', 'task'), /priority must be one of/)
 })
 
+test('add rejects a missing priority value', () => {
+  const run = makeFixture()
+  assert.throws(() => run('add', '-p'), /usage: todo add -p <low\|medium\|high> <text>/)
+  assert.equal(run('list').trim(), 'no todos')
+})
+
 test('add requires text', () => {
   const run = makeFixture()
   assert.throws(() => run('add'), /usage: todo add <text>/)

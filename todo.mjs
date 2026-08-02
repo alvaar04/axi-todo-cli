@@ -33,11 +33,15 @@ switch (cmd) {
     const text = args.join(' ')
     if (!text) fail('usage: todo add <text>')
     const PRIORITIES = ['low', 'medium', 'high']
-    const priority = args[0] === '-p' ? args[1] : undefined
-    if (priority !== undefined && !PRIORITIES.includes(priority)) {
+    const hasPriorityFlag = args[0] === '-p'
+    const priority = hasPriorityFlag ? args[1] : undefined
+    if (hasPriorityFlag && priority === undefined) {
+      fail('usage: todo add -p <low|medium|high> <text>')
+    }
+    if (hasPriorityFlag && !PRIORITIES.includes(priority)) {
       fail(`priority must be one of: ${PRIORITIES.join(', ')}`)
     }
-    const cleanText = priority !== undefined ? args.slice(2).join(' ') : text
+    const cleanText = hasPriorityFlag ? args.slice(2).join(' ') : text
     if (!cleanText) fail('usage: todo add [-p <low|medium|high>] <text>')
     todos.push({ id: todos.length + 1, text: cleanText, done: false, priority: priority ?? 'medium' })
     await save(todos)
