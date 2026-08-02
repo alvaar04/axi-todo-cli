@@ -32,15 +32,22 @@ switch (cmd) {
   case 'add': {
     const text = args.join(' ')
     if (!text) fail('usage: todo add <text>')
-    todos.push({ id: todos.length + 1, text, done: false })
+    const PRIORITIES = ['low', 'medium', 'high']
+    const priority = args[0] === '-p' ? args[1] : undefined
+    if (priority !== undefined && !PRIORITIES.includes(priority)) {
+      fail(`priority must be one of: ${PRIORITIES.join(', ')}`)
+    }
+    const cleanText = priority !== undefined ? args.slice(2).join(' ') : text
+    if (!cleanText) fail('usage: todo add [-p <low|medium|high>] <text>')
+    todos.push({ id: todos.length + 1, text: cleanText, done: false, priority: priority ?? 'medium' })
     await save(todos)
-    console.log(`added #${todos.length}: ${text}`)
+    console.log(`added #${todos.length}: ${cleanText} (${priority ?? 'medium'})`)
     break
   }
   case 'list': {
     if (todos.length === 0) return console.log('no todos')
     for (const t of todos) {
-      console.log(`${t.done ? '[x]' : '[ ]'} #${t.id} ${t.text}`)
+      console.log(`${t.done ? '[x]' : '[ ]'} #${t.id} ${t.text} [${t.priority ?? 'medium'}]`)
     }
     break
   }
@@ -65,6 +72,7 @@ switch (cmd) {
   default:
     console.log(`usage: todo <add|list|done|rm> [args]`)
     console.log(`  todo add <text>   add a todo`)
+    console.log(`  todo add -p <low|medium|high> <text>   add a todo with priority`)
     console.log(`  todo list         list todos`)
     console.log(`  todo done <id>    mark #id done`)
     console.log(`  todo rm <id>      remove #id`)
